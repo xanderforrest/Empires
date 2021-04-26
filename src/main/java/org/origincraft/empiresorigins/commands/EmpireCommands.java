@@ -42,7 +42,6 @@ public class EmpireCommands {
 
         try {
             Empire empire = EmpireHelper.getEmpireByPlayer(player);
-
             empire.home = player.getPos();
             empire.homeWorld = player.getServerWorld();
             Config.addEmpire(empire);

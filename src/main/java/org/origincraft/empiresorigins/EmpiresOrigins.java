@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.origincraft.empiresorigins.commands.EmpireCommands;
 import org.origincraft.empiresorigins.config.Config;
+import org.origincraft.empiresorigins.config.ConfigHelper;
 import org.origincraft.empiresorigins.events.BlockInteraction;
 
 public class EmpiresOrigins implements ModInitializer {
@@ -16,13 +17,14 @@ public class EmpiresOrigins implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        log("Starting up...");
         //PlayerBlockBreakEvents.BEFORE.register(BlockInteraction::breakBlock);
-        ServerLifecycleEvents.SERVER_STARTING.register(Config::onStart);
+        ServerLifecycleEvents.SERVER_STARTING.register(ConfigHelper::serverLoad);
         CommandRegistrationCallback.EVENT.register(EmpireCommands::register);
     }
 
     public static void log(String msg, Object... o) {
-        logger.info(msg, o);
+        logger.info("[EO] " + msg, o);
     }
 
 }

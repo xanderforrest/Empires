@@ -15,10 +15,10 @@ public class Empire {
     public List<UUID> members;
     public List<UUID> invited;
 
-    public Empire(ServerPlayerEntity creator, String name) {
+    public Empire(UUID creator, String name) {
         this.name = name;
         this.members = new ArrayList<>();
-        this.members.add(creator.getUuid());
+        this.members.add(creator);
         this.invited = new ArrayList<>();
     }
 

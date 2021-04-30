@@ -6,7 +6,7 @@ import net.minecraft.util.math.ChunkPos;
 import java.util.HashMap;
 
 public class EmpireHelper {
-    public static Empire getEmpireByPlayer(ServerPlayerEntity player) throws Exception {
+    public static Empire getEmpireByPlayer(ServerPlayerEntity player) {
 
         HashMap<String, Empire> empires = Config.getEmpires();
 
@@ -15,7 +15,7 @@ public class EmpireHelper {
                 return e;
             }
         }
-        throw new Exception("Player does not belong to an Empire");
+        return null;
     }
 
     public static Empire getEmpireByName(String name) throws Exception {

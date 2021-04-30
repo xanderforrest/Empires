@@ -49,12 +49,20 @@ public class EmpireCommands {
     public static int claim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ChunkPos chunk = new ChunkPos(player.getBlockPos());
-        Empire empire;
+        Empire empire = EmpireHelper.getEmpireByPlayer(player);
 
-        try {
-            empire = EmpireHelper.getEmpireByPlayer(player);
-        } catch (Exception e) {
+        if (empire == null) {
             player.sendMessage(new LiteralText("You need to be in an Empire to claim land."), false);
+            return 1;
+        }
+
+        Empire chunkEmpire = EmpireHelper.getChunkEmpire(chunk);
+        if (chunkEmpire != null) {
+            if (chunkEmpire.name.equals(empire.name)) {
+                player.sendMessage(new LiteralText("Your Empire has already claimed this area!"), false);
+            } else {
+                player.sendMessage(new LiteralText(chunkEmpire.name + " controls this area already!"), false);
+            }
             return 1;
         }
 
@@ -78,38 +86,51 @@ public class EmpireCommands {
 
     public static int setEmpireHome(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
+        Empire empire = EmpireHelper.getEmpireByPlayer(player);
+        Empire chunkEmpire = EmpireHelper.getChunkEmpire(new ChunkPos(player.getBlockPos()));
 
-        try {
-            Empire empire = EmpireHelper.getEmpireByPlayer(player);
-            empire.home = player.getPos();
-            empire.homeWorld = player.getServerWorld();
-            Config.addEmpire(empire);
-
-            player.sendMessage(new LiteralText("Your Empire's home has been set to your location."), false);
-
-        } catch (Exception e) {
-            player.sendMessage(new LiteralText("You need to be in an Empire to set its home."), false);
+        if (empire == null) {
+            player.sendMessage(new LiteralText("You need to be in your Empire to set its home."), false);
             return 1;
         }
+
+        if (chunkEmpire != null) {
+            if (!chunkEmpire.equals(empire)) {
+                player.sendMessage(new LiteralText("You can't set your Empire's home in another Empire's land."), false);
+                return 1;
+            }
+        }
+
+        empire.home = player.getPos();
+        empire.homeWorld = player.getServerWorld();
+        Config.addEmpire(empire);
+
+        player.sendMessage(new LiteralText("Your Empire's home has been set to your location."), false);
+
+
+
         return 1;
     }
 
     public static int empireHome(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
 
-        try {
-            Empire empire = EmpireHelper.getEmpireByPlayer(player);
-            Vec3d home = empire.home;
+        Empire empire = EmpireHelper.getEmpireByPlayer(player);
 
-            if (!player.getServerWorld().equals(empire.homeWorld)) {
-                player.moveToWorld(empire.homeWorld); // This check stops a weird bug where inventory is cleared client side til you relog
-            }
-            player.teleport(home.x, home.y, home.z);
-            player.sendMessage(new LiteralText("Wooosh"), false);
-        } catch (Exception e) {
+        if (empire == null) {
             player.sendMessage(new LiteralText("You need an Empire to teleport home to."), false);
             return 1;
         }
+
+        Vec3d home = empire.home;
+
+        if (!player.getServerWorld().equals(empire.homeWorld)) {
+            player.moveToWorld(empire.homeWorld); // This check stops a weird bug where inventory is cleared client side til you relog
+        }
+
+        player.teleport(home.x, home.y, home.z);
+        player.sendMessage(new LiteralText("Wooosh"), false);
+
         return 1;
     }
 

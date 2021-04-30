@@ -9,8 +9,11 @@ import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.dimension.DimensionType;
 import org.origincraft.empiresorigins.config.Config;
 import org.origincraft.empiresorigins.config.Empire;
 import org.origincraft.empiresorigins.config.EmpireHelper;
@@ -38,7 +41,35 @@ public class EmpireCommands {
                         .executes(EmpireCommands::empireHome))
                         .then(CommandManager.literal("save")
                                 .executes(EmpireCommands::saveConfig))
+                .then(CommandManager.literal("claim")
+                        .executes(EmpireCommands::claim))
                 );
+    }
+
+    public static int claim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        log("prechunk set");
+        ChunkPos chunk = new ChunkPos(player.getBlockPos());
+        log("post chunk set");
+        Empire empire;
+
+        try {
+            empire = EmpireHelper.getEmpireByPlayer(player);
+            log("got empire");
+        } catch (Exception e) {
+            player.sendMessage(new LiteralText("You need to be in an Empire to claim land."), false);
+            return 1;
+        }
+
+        empire.addClaim(chunk);
+        log("added claim");
+        Config.addEmpire(empire);
+        log("re added empire");
+
+        player.sendMessage(new LiteralText("You claimed this chunk for " + empire.name), false);
+
+
+        return 1;
     }
 
     public static int saveConfig(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {

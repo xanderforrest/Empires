@@ -1,11 +1,11 @@
 package org.origincraft.empiresorigins.config;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.ChunkPos;
 
 import java.util.HashMap;
 
 public class EmpireHelper {
-
     public static Empire getEmpireByPlayer(ServerPlayerEntity player) throws Exception {
 
         HashMap<String, Empire> empires = Config.getEmpires();
@@ -28,5 +28,17 @@ public class EmpireHelper {
             throw new Exception("That Empire does not exist");
         }
     }
+
+    public static Empire getChunkEmpire(ChunkPos chunk) throws Exception {
+        for (Empire e : Config.getEmpires().values()) {
+            for (ChunkPos c : e.claims) {
+                if (chunk.equals(c)) {
+                    return e;
+                }
+            }
+        }
+        throw new Exception("This chunk does not belong to an Empire.");
+    }
+
 
 }

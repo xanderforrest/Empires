@@ -18,7 +18,7 @@ public class EmpiresOrigins implements ModInitializer {
     @Override
     public void onInitialize() {
         log("Starting up...");
-        //PlayerBlockBreakEvents.BEFORE.register(BlockInteraction::breakBlock);
+        PlayerBlockBreakEvents.BEFORE.register(BlockInteraction::breakBlock);
         ServerLifecycleEvents.SERVER_STARTING.register(ConfigHelper::serverLoad);
         CommandRegistrationCallback.EVENT.register(EmpireCommands::register);
     }

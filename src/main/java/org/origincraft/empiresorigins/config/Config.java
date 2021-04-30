@@ -4,6 +4,7 @@ package org.origincraft.empiresorigins.config;
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
 import java.io.File;
@@ -76,7 +77,6 @@ public class Config {
             JsonArray homeCoords = jsonEmpire.get("homeCoords").getAsJsonArray();
             empire.home = new Vec3d(homeCoords.get(0).getAsDouble(),
                     homeCoords.get(1).getAsDouble(), homeCoords.get(2).getAsDouble());
-
             empires.put(empire.name, empire);
         }
 

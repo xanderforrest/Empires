@@ -87,7 +87,7 @@ public class EmpireCommands {
         try {
             Empire empire = EmpireHelper.getEmpireByPlayer(player);
             empire.home = player.getPos();
-            //empire.homeWorld = player.getServerWorld();
+            empire.homeWorld = player.getServerWorld();
             Config.addEmpire(empire);
 
             player.sendMessage(new LiteralText("Your Empire's home has been set to your location."), false);
@@ -106,9 +106,9 @@ public class EmpireCommands {
             Empire empire = EmpireHelper.getEmpireByPlayer(player);
             Vec3d home = empire.home;
 
-            //if (!player.getServerWorld().equals(empire.homeWorld)) {
-            //    player.moveToWorld(empire.homeWorld); // This check stops a weird bug where inventory is cleared client side til you relog
-            //}
+            if (!player.getServerWorld().equals(empire.homeWorld)) {
+                player.moveToWorld(empire.homeWorld); // This check stops a weird bug where inventory is cleared client side til you relog
+            }
             player.teleport(home.x, home.y, home.z);
             player.sendMessage(new LiteralText("Wooosh"), false);
         } catch (Exception e) {

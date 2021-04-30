@@ -5,7 +5,10 @@ import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,9 +26,11 @@ public class Config {
 
     private static HashMap<String, Empire> empires;
     private static File config;
+    public static MinecraftServer server;
 
     public Config(MinecraftServer minecraftServer) {
         File configDir = FabricLoader.getInstance().getConfigDir().resolve("eo").toFile();
+        server = minecraftServer;
 
         try {
             if (!configDir.exists())
@@ -77,6 +82,10 @@ public class Config {
             JsonArray homeCoords = jsonEmpire.get("homeCoords").getAsJsonArray();
             empire.home = new Vec3d(homeCoords.get(0).getAsDouble(),
                     homeCoords.get(1).getAsDouble(), homeCoords.get(2).getAsDouble());
+
+            empire.homeWorld = server.getWorld(RegistryKey.of(Registry.DIMENSION,
+                    new Identifier(jsonEmpire.get("homeWorld").getAsString()))); // Registry#DIMENSION may be WORLD_KEY
+
             empires.put(empire.name, empire);
         }
 
@@ -106,6 +115,9 @@ public class Config {
             jsonEmpire.add("members", members);
             jsonEmpire.add("invited", invited);
             jsonEmpire.add("homeCoords", homeCoords);
+
+            String worldIdentifier = e.homeWorld.getRegistryKey().getValue().toString();
+            jsonEmpire.addProperty("homeWorld", worldIdentifier);
 
             jsonEmpires.add(jsonEmpire);
         }

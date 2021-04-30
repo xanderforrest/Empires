@@ -15,7 +15,7 @@ public class Empire {
     public ServerWorld homeWorld;
     public List<UUID> members;
     public List<UUID> invited;
-    public List<ChunkPos> claims;
+    public List<ChunkPos> claims; // TODO change to custom chunk object, and have this as a hashmap<worldidentifier, List<chunk>>
 
     public Empire(UUID creator, String name) {
         this.name = name;

@@ -48,23 +48,18 @@ public class EmpireCommands {
 
     public static int claim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        log("prechunk set");
         ChunkPos chunk = new ChunkPos(player.getBlockPos());
-        log("post chunk set");
         Empire empire;
 
         try {
             empire = EmpireHelper.getEmpireByPlayer(player);
-            log("got empire");
         } catch (Exception e) {
             player.sendMessage(new LiteralText("You need to be in an Empire to claim land."), false);
             return 1;
         }
 
         empire.addClaim(chunk);
-        log("added claim");
         Config.addEmpire(empire);
-        log("re added empire");
 
         player.sendMessage(new LiteralText("You claimed this chunk for " + empire.name), false);
 

@@ -63,6 +63,7 @@ public class BlockInteraction {
                     if (empire.members.contains(player.getUuid())) {
                         return ActionResult.PASS;
                     } else {
+                        player.sendMessage(new LiteralText("This block is locked with a magical spell"), false);
                         return ActionResult.FAIL;
                     }
                 }

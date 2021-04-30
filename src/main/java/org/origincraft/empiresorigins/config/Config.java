@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -86,6 +87,13 @@ public class Config {
             empire.homeWorld = server.getWorld(RegistryKey.of(Registry.DIMENSION,
                     new Identifier(jsonEmpire.get("homeWorld").getAsString()))); // Registry#DIMENSION may be WORLD_KEY
 
+            JsonArray empireClaims = jsonEmpire.get("claims").getAsJsonArray();
+            for (JsonElement claimElement : empireClaims) {
+                JsonArray claim = claimElement.getAsJsonArray();
+                ChunkPos chunk = new ChunkPos(claim.get(0).getAsInt(), claim.get(1).getAsInt());
+                empire.addClaim(chunk);
+            }
+
             empires.put(empire.name, empire);
         }
 
@@ -118,6 +126,15 @@ public class Config {
 
             String worldIdentifier = e.homeWorld.getRegistryKey().getValue().toString();
             jsonEmpire.addProperty("homeWorld", worldIdentifier);
+
+            JsonArray empireClaims = new JsonArray();
+            for (ChunkPos chunk : e.claims) {
+                JsonArray claim = new JsonArray();
+                claim.add(chunk.x);
+                claim.add(chunk.z);
+                empireClaims.add(claim);
+            }
+            jsonEmpire.add("claims", empireClaims);
 
             jsonEmpires.add(jsonEmpire);
         }

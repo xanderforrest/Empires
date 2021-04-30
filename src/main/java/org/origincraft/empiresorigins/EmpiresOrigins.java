@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.origincraft.empiresorigins.commands.EmpireCommands;
@@ -19,6 +20,7 @@ public class EmpiresOrigins implements ModInitializer {
     public void onInitialize() {
         log("Starting up...");
         PlayerBlockBreakEvents.BEFORE.register(BlockInteraction::breakBlock);
+        UseBlockCallback.EVENT.register(BlockInteraction::useBlocks);
         ServerLifecycleEvents.SERVER_STARTING.register(ConfigHelper::serverLoad);
         CommandRegistrationCallback.EVENT.register(EmpireCommands::register);
     }

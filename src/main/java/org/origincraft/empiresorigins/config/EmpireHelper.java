@@ -29,7 +29,7 @@ public class EmpireHelper {
         }
     }
 
-    public static Empire getChunkEmpire(ChunkPos chunk) throws Exception {
+    public static Empire getChunkEmpire(ChunkPos chunk) {
         for (Empire e : Config.getEmpires().values()) {
             for (ChunkPos c : e.claims) {
                 if (chunk.equals(c)) {
@@ -37,7 +37,7 @@ public class EmpireHelper {
                 }
             }
         }
-        throw new Exception("This chunk does not belong to an Empire.");
+        return null;
     }
 
 

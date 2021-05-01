@@ -18,14 +18,14 @@ public class EmpireHelper {
         return null;
     }
 
-    public static Empire getEmpireByName(String name) throws Exception {
+    public static Empire getEmpireByName(String name) {
 
         HashMap<String, Empire> empires = Config.getEmpires();
 
         if (empires.containsKey(name)) {
             return empires.get(name);
         } else {
-            throw new Exception("That Empire does not exist");
+            return null;
         }
     }
 

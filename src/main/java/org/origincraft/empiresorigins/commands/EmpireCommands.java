@@ -79,9 +79,14 @@ public class EmpireCommands {
         ServerPlayerEntity player = context.getSource().getPlayer();
         log("Running save...");
         player.sendMessage(new LiteralText("Saving plugins configuration manually..."), false);
-        Config.save();
-        player.sendMessage(new LiteralText("Configuration saved."), false);
-        return 1;
+        try {
+            Config.save();
+            player.sendMessage(new LiteralText("Configuration saved."), false);
+            return 1;
+        } catch (Error e) {
+            log(e.toString());
+            return -1;
+        }
     }
 
     public static int setEmpireHome(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -140,6 +145,12 @@ public class EmpireCommands {
 
         String name = StringArgumentType.getString(context, "name");
 
+        Empire existingEmpire = EmpireHelper.getEmpireByName(name);
+        if (existingEmpire != null) {
+            player.sendMessage(new LiteralText("There's already an Empire named " + existingEmpire), false);
+            return 1;
+        }
+
         Empire createdEmpire = new Empire(player.getUuid(), name);
         Config.addEmpire(createdEmpire);
 
@@ -150,11 +161,9 @@ public class EmpireCommands {
 
     public static int invitePlayerToEmpire(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        Empire empire;
+        Empire empire = EmpireHelper.getEmpireByPlayer(player);
 
-        try {
-            empire = EmpireHelper.getEmpireByPlayer(player);
-        } catch (Exception e) {
+        if (empire == null) {
             player.sendMessage(new LiteralText("You need to be in an Empire to invite someone to it."), false);
             return 1;
         }
@@ -174,17 +183,15 @@ public class EmpireCommands {
     public static int joinEmpire(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
         String name = StringArgumentType.getString(context, "empire");
-        Empire empire;
+        Empire empireCheck = EmpireHelper.getEmpireByPlayer(player);
 
-        try { // are they already in an empire?
-            EmpireHelper.getEmpireByPlayer(player);
+        if (empireCheck != null) {
             player.sendMessage(new LiteralText("You're already in an Empire!"), false);
             return 1;
-        } catch (Exception ignored) { }
+        }
 
-        try { // check the empire exists
-            empire = EmpireHelper.getEmpireByName(name);
-        } catch (Exception e) {
+        Empire empire = EmpireHelper.getEmpireByName(name);
+        if (empire == null) {
             player.sendMessage(new LiteralText("There isn't an Empire with that name to join."), false);
             return 1;
         }
@@ -197,6 +204,7 @@ public class EmpireCommands {
             player.sendMessage(new LiteralText("You joined " + empire.name), false);
         } else {
             player.sendMessage(new LiteralText("You need to be invited to the Empire to join it"), false);
+            return 1;
         }
 
         Config.addEmpire(empire);
